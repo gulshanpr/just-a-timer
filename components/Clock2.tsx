@@ -14,7 +14,6 @@ export default function Clock2() {
   const [clock1Started, setClock1Started] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load saved data
   useEffect(() => {
     const saved = localStorage.getItem(CLOCK2_STORAGE_KEY);
     const savedElapsed = saved ? parseInt(saved) : 0;
@@ -35,22 +34,17 @@ export default function Clock2() {
         setIsRunning(false);
         localStorage.setItem(CLOCK2_RUNNING_KEY, "false");
       }
-    } else {
-      setIsRunning(false);
     }
 
-    // Initial check for Clock1
-    const clock1Started = localStorage.getItem(CLOCK1_STARTED_KEY) === "true";
-    setClock1Started(clock1Started);
+    const clock1 = localStorage.getItem(CLOCK1_STARTED_KEY) === "true";
+    setClock1Started(clock1);
   }, []);
 
-  // Continuously monitor Clock1 status
   useEffect(() => {
     const interval = setInterval(() => {
       const started = localStorage.getItem(CLOCK1_STARTED_KEY) === "true";
       setClock1Started(started);
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -101,7 +95,6 @@ export default function Clock2() {
     }
   };
 
-  // Save on tab/browser close
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (isRunning) {
@@ -150,10 +143,13 @@ export default function Clock2() {
 }
 
 function formatTime(sec: number) {
-  const hrs = Math.floor(sec / 3600);
+  const days = Math.floor(sec / 86400);
+  const hrs = Math.floor((sec % 86400) / 3600);
   const mins = Math.floor((sec % 3600) / 60);
   const secs = sec % 60;
-  return `${hrs.toString().padStart(2, "0")}:${mins
+  return `${days.toString().padStart(2, "0")}:${hrs
     .toString()
-    .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
 }

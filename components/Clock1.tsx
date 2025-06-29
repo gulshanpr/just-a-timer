@@ -8,13 +8,11 @@ export default function Clock1() {
   const [elapsed, setElapsed] = useState(0);
   const [started, setStarted] = useState(false);
 
-  // On initial mount, check if previously started
   useEffect(() => {
     const hasStarted = localStorage.getItem(CLOCK1_STARTED_KEY) === "true";
     setStarted(hasStarted);
   }, []);
 
-  // When started becomes true, start interval
   useEffect(() => {
     if (!started) return;
 
@@ -46,7 +44,6 @@ export default function Clock1() {
     <div className="text-center">
       <h2 className="font-mono text-4xl font-semibold mb-4">Forever Clock</h2>
       <p className="text-9xl font-mono">{formatTime(elapsed)}</p>
-      {/* Fixed button area that matches Clock2 exactly */}
       <div className="mt-6 flex justify-center gap-4">
         {!started ? (
           <button
@@ -56,14 +53,12 @@ export default function Clock1() {
             Start
           </button>
         ) : (
-          // Invisible placeholder buttons to maintain exact same height
           <>
             <div className="text-2xl px-6 py-2 opacity-0">Start</div>
             <div className="text-2xl px-6 py-2 opacity-0">Pause</div>
           </>
         )}
       </div>
-      {/* Message area - shows only when not started */}
       <div className="mt-4 h-6">
         {!started && (
           <p className="text-black text-lg font-mono">
@@ -78,10 +73,13 @@ export default function Clock1() {
 }
 
 function formatTime(sec: number) {
-  const hrs = Math.floor(sec / 3600);
+  const days = Math.floor(sec / 86400);
+  const hrs = Math.floor((sec % 86400) / 3600);
   const mins = Math.floor((sec % 3600) / 60);
   const secs = sec % 60;
-  return `${hrs.toString().padStart(2, "0")}:${mins
+  return `${days.toString().padStart(2, "0")}:${hrs
     .toString()
-    .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    .padStart(2, "0")}:${mins.toString().padStart(2, "0")}:${secs
+    .toString()
+    .padStart(2, "0")}`;
 }
